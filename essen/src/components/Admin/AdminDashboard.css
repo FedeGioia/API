@@ -8,6 +8,10 @@
   min-height: 100vh;
 }
 
+.bg-custom-admin-background {
+  background-color: #5c2b08; /* Marrón oscuro */
+}
+.bg-cutom-side-color
 /* Header */
 .admin-header {
   display: flex;
@@ -105,4 +109,57 @@
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Cards generales */
+.card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Card de Platos */
+.card-dishes {
+  background-color: #8b4513; /* Marrón medio */
+  color: #ffffff; /* Texto blanco */
+}
+
+.card-dishes:hover {
+  background-color: #a88165; /* Beige claro */
+}
+
+/* Card de Usuarios */
+.card-users {
+  background-color: #4caf50; /* Verde oscuro */
+  color: #ffffff; /* Texto blanco */
+}
+
+.card-users:hover {
+  background-color: #66bb6a; /* Verde claro */
+}
+
+/* Card de Explora más */
+.card-explore {
+  background: linear-gradient(to top right, #5c2b08, #8b4513, #a88165);
+  color: #ffffff; /* Texto blanco */
+}
+
+.card-explore button {
+  background-color: #8b4513; /* Marrón medio */
+  color: #ffffff; /* Texto blanco */
+  border: none;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.card-explore button:hover {
+  background-color: #a88165; /* Beige claro */
 }

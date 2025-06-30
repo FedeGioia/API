@@ -36,6 +36,7 @@ const Login = () => {
       setError("");
       alert("Login exitoso");
       navigate("/admin");
+      window.location.reload(); // Recarga la página después de navegar
     } catch (error) {
       setError(error.message);
     }

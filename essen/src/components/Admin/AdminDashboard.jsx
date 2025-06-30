@@ -3,8 +3,8 @@ import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom"
 import ManageDishes from "./ManageDishes";
 import ManageUser from "./ManageUser";
 import Login from "./Login";
-
-
+import "./AdminDashboard.css";
+ 
 const AdminLayout = () => {
   const [user, setUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -13,6 +13,18 @@ const AdminLayout = () => {
   const isLoginModalOpen = location.pathname === "/admin/login";
   const prevPath = useRef();
 
+  // Verifica si el usuario está autenticado
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      setUser(userData);
+    } else {
+      setUser(null);
+      navigate("/admin/login"); // Redirige al login si no está autenticado
+    }
+  }, [navigate]);
+
   // Guarda la ruta previa
   useEffect(() => {
     prevPath.current = location.state?.from || document.referrer;
@@ -20,7 +32,6 @@ const AdminLayout = () => {
 
   // Refresca la pantalla solo una vez al entrar a /admin (no en cada cambio de ruta)
   useEffect(() => {
-    // Solo refresca si venís del login y no refrescaste aún
     if (
       location.state?.from === "/admin/login" &&
       sessionStorage.getItem("adminRefreshed") !== "true"
@@ -28,7 +39,6 @@ const AdminLayout = () => {
       sessionStorage.setItem("adminRefreshed", "true");
       window.location.reload();
     }
-    // eslint-disable-next-line
   }, [location.state]);
 
   // Limpia el flag al salir del dashboard (opcional, por si navega fuera)
@@ -36,14 +46,6 @@ const AdminLayout = () => {
     return () => {
       sessionStorage.removeItem("adminRefreshed");
     };
-  }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const userData = JSON.parse(localStorage.getItem("user"));
-      setUser(userData);
-    }
   }, []);
 
   const handleLogout = () => {
@@ -54,8 +56,8 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white">
-      <header className="flex justify-between items-center p-6 border-b border-gray-700">
+    <div className="min-h-screen bg-custom-admin-background text-white">
+      <header className="flex justify-between items-center p-6 border-b border-amber-700">
         <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
         <div className="flex items-center gap-4">
           {user ? (
@@ -79,7 +81,7 @@ const AdminLayout = () => {
       <div className="grid grid-cols-1 md:grid-cols-12">
         {/* Sidebar collapsable */}
         <nav
-          className={`transition-all duration-300 bg-gray-900 border-r border-gray-700 min-h-screen
+          className={`transition-all duration-300 bg-cutom-side-color border-r border-amber-700 min-h-screen
             ${sidebarOpen
               ? "md:col-span-2 p-6 w-full md:w-56"
               : "md:col-span-1 p-2 w-full md:w-16"
@@ -97,21 +99,21 @@ const AdminLayout = () => {
             <div className="flex flex-col gap-2">
               <Link
                 to="/admin"
-                className="no-underline flex items-center gap-3 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-xl transition shadow-sm"
+                className="no-underline flex items-center gap-3 bg-amber-800 hover:bg-amber-600 text-white px-4 py-3 rounded-xl transition shadow-sm"
               >
                 🏠
                 {sidebarOpen && <span className="font-semibold text-sm">Home</span>}
               </Link>
               <Link
                 to="/admin/dishes"
-                className="no-underline flex items-center gap-3 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-xl transition shadow-sm pr-8"
+                className="no-underline flex items-center gap-3 bg-amber-800 hover:bg-amber-600 text-white px-4 py-3 rounded-xl transition shadow-sm"
               >
-                🍽️   
+                🍽️
                 {sidebarOpen && <span className="font-semibold text-sm">Comidas</span>}
               </Link>
               <Link
                 to="/admin/users"
-                className="no-underline flex items-center gap-3 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-xl transition shadow-sm"
+                className="no-underline flex items-center gap-3 bg-amber-800 hover:bg-amber-600 text-white px-4 py-3 rounded-xl transition shadow-sm"
               >
                 👤
                 {sidebarOpen && <span className="font-semibold text-sm">Usuarios</span>}
@@ -129,20 +131,31 @@ const AdminLayout = () => {
         >
           {location.pathname === "/admin" && (
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-yellow-400 text-black p-6 rounded-2xl shadow-lg">
+              {/* Card de Platos */}
+              <div
+                className="bg-amber-800 text-white p-6 rounded-2xl shadow-lg cursor-pointer hover:bg-amber-600 transition"
+                onClick={() => navigate("/admin/dishes")}
+              >
                 <h3 className="text-sm font-semibold mb-2">Platos</h3>
                 <p className="text-3xl font-bold">+700</p>
                 <p className="text-sm mt-1">Creados en 2023</p>
               </div>
-              <div className="bg-green-500 p-6 rounded-2xl shadow-lg">
+
+              {/* Card de Usuarios */}
+              <div
+                className="bg-green-700 text-white p-6 rounded-2xl shadow-lg cursor-pointer hover:bg-green-600 transition"
+                onClick={() => navigate("/admin/users")}
+              >
                 <h3 className="text-sm font-semibold mb-2">Usuarios</h3>
-                <p className="text-3xl font-bold text-white">350</p>
-                <p className="text-sm mt-1 text-white">Activos este mes</p>
+                <p className="text-3xl font-bold">350</p>
+                <p className="text-sm mt-1">Activos este mes</p>
               </div>
+
+              {/* Card de Explora más */}
               <div className="bg-gradient-to-tr from-gray-700 via-gray-600 to-gray-800 p-6 rounded-2xl shadow-lg">
                 <h3 className="text-sm font-semibold mb-2 text-white">Explora más</h3>
                 <Link to="/admin/dishes">
-                  <button className="mt-2 px-4 py-2 bg-white text-black rounded-full font-medium hover:bg-gray-200 transition">
+                  <button className="mt-2 px-4 py-2 bg-amber-800 text-white rounded-full font-medium hover:bg-amber-600 transition">
                     Ir a Platos
                   </button>
                 </Link>

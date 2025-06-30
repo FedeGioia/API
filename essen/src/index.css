@@ -20,7 +20,7 @@ body {
 
 /* Estilos para el encabezado */
 .header {
-  background-color: #92400e;
+  background-color: #5c2b08;
   color: white;
   padding: 1.5rem 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -137,6 +137,10 @@ body {
 .sidebar-button.active {
   background-color: #d97706;
   color: white;
+}
+
+.bg-custom-background {
+  background-color: #fad5b2; 
 }
 
 .sidebar-button:not(.active) {

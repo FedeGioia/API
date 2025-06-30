@@ -18,7 +18,7 @@ const About = () => {
   };
 
   return (
-    <div className="min-h-screen bg-amber-50 flex flex-col items-center text-center px-4 py-8">
+    <div className="min-h-screen flex flex-col items-center text-center px-4 py-8">
 
         <div className="bg-gradient-to-b from-amber-600 to-amber-500 shadow-lg rounded-2xl w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center my-12 p-6 md:p-16 min-h-[350px] md:min-h-[500px]">
         {/* Imagen a la izquierda */}
@@ -51,12 +51,13 @@ const About = () => {
         <div className="w-full md:w-1/2 flex flex-col items-center text-center mb-6 md:mb-0 md:mr-16">
           <h2 className="text-3xl md:text-6xl font-serif font-extrabold mb-4 md:mb-8 text-white drop-shadow-lg">Ubicación</h2>
           <p className="text-lg md:text-2xl text-white mb-4 md:mb-8 font-semibold drop-shadow font-sans">
-            Para realizar una reserva, llámanos al:
+            Estamos ubicados en
             <br />
-            <span className="font-bold"> +34 123 456 789</span>
+            <span className="font-bold"> Pasaje Pereyra 1730</span>
             <br />
-            o envíanos un correo a:
-            <span className="font-bold"> reservas@essen.com</span>
+            
+            Si queres ver nuestra ubicación en Google Maps:
+           
           </p>
           <button
             className="bg-white text-amber-700 font-bold px-6 py-3 md:px-10 md:py-5 rounded-2xl shadow-xl hover:bg-amber-800 hover:text-black transition text-lg md:text-2xl border-4 border-amber-700 hover:border-black mt-4 md:mt-8 font-sans"

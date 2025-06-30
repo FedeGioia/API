@@ -121,7 +121,7 @@ const Menu = ({ activeCategory, setActiveCategory, activeSubcategory, setActiveS
 
       {/* Sidebar */}
       <div
-        className={`fixed rounded-lg md:static top-0 left-0 h-full bg-white shadow-lg transform ${
+        className={`fixed rounded-lg md:static top-0 left-0 min-h-screen bg-white shadow-lg transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 z-40 w-64 md:w-64 md:translate-x-0`}
       >
