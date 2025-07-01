@@ -5,12 +5,15 @@
     nombre_usuario: { type: DataTypes.STRING, allowNull: false, unique: true },
     email: { type: DataTypes.STRING, allowNull: false, unique: true },
     password: { type: DataTypes.STRING, allowNull: false },
-    rol_id: { type: DataTypes.STRING, defaultValue: 'editor' },
+    rol_id: { type: DataTypes.INTEGER, defaultValue: 2 },
     eliminado: { type: DataTypes.TINYINT, defaultValue: 0 },
+    eliminado_por: { type: DataTypes.STRING, allowNull: true },
   }, {
     timestamps: true,
     createdAt: 'fecha_creacion',
     updatedAt: 'fecha_modificacion',
   });
+
+  Usuario.belongsTo(require('./Rol'), { foreignKey: 'rol_id', as: 'rol' });
 
   module.exports = Usuario;
