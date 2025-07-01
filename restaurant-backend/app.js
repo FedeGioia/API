@@ -19,7 +19,7 @@ app.use(express.json());
 
 app.use('/api/platos', platoRoutes);
 app.use('/api/usuarios', usuarioRoutes);
-app.use('/roles', rolesRoutes); // Usa las rutas con el prefijo /api/roles
+app.use('/api/roles', rolesRoutes);
 app.use('/api', authRoutes);
 app.use('/api', categoriaRoutes);
 
