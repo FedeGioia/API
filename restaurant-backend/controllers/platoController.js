@@ -2,6 +2,7 @@ const Plato = require('../models/Plato');
 const Categoria = require('../models/Categoria');
 const Subcategoria = require('../models/Subcategoria');
 const Alergeno = require('../models/Alergeno'); 
+const { body, validationResult } = require('express-validator');
 
 exports.listar = async (req, res) => {
   try {
@@ -61,16 +62,33 @@ exports.listar = async (req, res) => {
   }
 };
 
-exports.crear = async (req, res) => {
+// Middleware de validación de rol admin
+function requireAdmin(req, res, next) {
+  if (req.user && req.user.rol === 1) return next();
+  return res.status(403).json({ error: 'Solo administradores pueden realizar esta acción' });
+}
+
+// Validaciones para crear y modificar plato
+exports.validatePlato = [
+  body('nombre').notEmpty().withMessage('El nombre es obligatorio'),
+  body('precio').isFloat({ min: 0 }).withMessage('El precio debe ser un número positivo'),
+  // Agrega más validaciones según tu modelo
+];
+
+exports.crear = [requireAdmin, exports.validatePlato, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
   try {
     const plato = await Plato.create(req.body);
     res.status(201).json(plato);
   } catch (err) {
     res.status(400).json({ error: 'Error al crear plato' });
   }
-};
+}];
 
-exports.modificar = async (req, res) => {
+exports.modificar = [requireAdmin, exports.validatePlato, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
   try {
     const plato = await Plato.findByPk(req.params.id);
     if (!plato || plato.eliminado) return res.status(404).json({ error: 'Plato no encontrado' });
@@ -79,9 +97,9 @@ exports.modificar = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: 'Error al modificar plato' });
   }
-};
+}];
 
-exports.eliminar = async (req, res) => {
+exports.eliminar = [requireAdmin, async (req, res) => {
   try {
     const plato = await Plato.findByPk(req.params.id);
     if (!plato || plato.eliminado) return res.status(404).json({ error: 'Plato no encontrado' });
@@ -90,4 +108,4 @@ exports.eliminar = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Error al eliminar plato' });
   }
-};
+}];

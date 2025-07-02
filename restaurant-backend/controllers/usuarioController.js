@@ -1,6 +1,7 @@
 const Usuario = require('../models/Usuario');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { body, validationResult } = require('express-validator');
 
 exports.listar = async (req, res) => {
   try {
@@ -11,7 +12,20 @@ exports.listar = async (req, res) => {
   }
 };
 
-exports.crear = async (req, res) => {
+function requireAdmin(req, res, next) {
+  if (req.user && req.user.rol === 1) return next();
+  return res.status(403).json({ error: 'Solo administradores pueden realizar esta acción' });
+}
+
+exports.validateUsuario = [
+  body('nombre_usuario').notEmpty().withMessage('El nombre de usuario es obligatorio'),
+  body('email').isEmail().withMessage('Email inválido'),
+  body('password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
+];
+
+exports.crear = [requireAdmin, exports.validateUsuario, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
   try {
     const hash = await bcrypt.hash(req.body.password, 10);
     const usuario = await Usuario.create({ ...req.body, password: hash });
@@ -19,9 +33,11 @@ exports.crear = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: 'Error al crear usuario' });
   }
-};
+}];
 
-exports.modificar = async (req, res) => {
+exports.modificar = [requireAdmin, exports.validateUsuario, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
   try {
     const usuario = await Usuario.findByPk(req.params.id);
     if (!usuario || usuario.eliminado) return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -30,18 +46,18 @@ exports.modificar = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: 'Error al modificar usuario' });
   }
-};
+}];
 
-exports.eliminar = async (req, res) => {
+exports.eliminar = [requireAdmin, async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(req.params.id);
     if (!usuario || usuario.eliminado) return res.status(404).json({ error: 'Usuario no encontrado' });
-    await usuario.update({ eliminado: true });
+    await usuario.update({ eliminado: true, eliminado_por: req.user.nombre_usuario });
     res.json({ mensaje: 'Usuario eliminado lógicamente' });
   } catch (err) {
     res.status(500).json({ error: 'Error al eliminar usuario' });
   }
-};
+}];
 
 exports.login = async (req, res) => {
   try {
