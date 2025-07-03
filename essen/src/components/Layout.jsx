@@ -14,18 +14,18 @@ const Layout = () => {
         backgroundSize: "30px 30px",
       }}
     >
-      <header className="header bg-amber-600 shadow-md border-t-2 border-amber-700">
+      <header className="header bg-amber-600 shadow-md border-b-2 border-amber-700">
         <div className="container mx-auto px-4 flex flex-col items-center py-0.5 space-y-0">
           <div>
             <h1 className="text-lg md:text-xl font-serif font-semibold text-white tracking-tight">
               Essen Restaurant
             </h1>
             <div className="flex items-center justify-center space-x-1 my-0.5">
-              <span className="w-1/4 h-px bg-amber-200"></span>
-              <p className="text-xs md:text-sm text-amber-100 italic whitespace-nowrap">
+              <span className="flex-1 h-px bg-amber-200 -translate-y-1"></span>
+              <p className="text-xs md:text-sm text-amber-100 italic whitespace-nowrap px-2">
                 Cocina de autor con sabores tradicionales
               </p>
-              <span className="w-1/4 h-px bg-amber-200"></span>
+              <span className="flex-1 h-px bg-amber-200 -translate-y-1"></span>
             </div>
           </div>
           <button
@@ -48,11 +48,11 @@ const Layout = () => {
             reservados.
           </p>
           <div className="flex items-center justify-center space-x-2 w-full">
-            <span className="flex-1 h-px bg-amber-700" />
-            <p className="text-sm italic px-4">
+            <span className="flex-1 h-px bg-amber-200" />
+            <p className="text-sm italic px-4 text-amber-100">
               Calle Principal 123, Ciudad | Tel: +34 123 456 789
             </p>
-            <span className="flex-1 h-px bg-amber-700" />
+            <span className="flex-1 h-px bg-amber-200" />
           </div>
         </div>
       </footer>

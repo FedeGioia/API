@@ -1,165 +1,202 @@
-/* Contenedor principal */
-.admin-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  background-color: #f4f4f4;
-  min-height: 100vh;
+/* Estilos modernos para AdminDashboard - Complementando Tailwind */
+
+/* Animaciones y efectos modernos */
+.admin-transition {
+  transition: all 0.3s ease;
 }
 
-.bg-custom-admin-background {
-  background-color: #5c2b08; /* Marrón oscuro */
-}
-.bg-cutom-side-color
-/* Header */
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 1rem;
-  background-color: #007bff;
-  color: #fff;
-  border-radius: 8px;
-  margin-bottom: 2rem;
+/* Animación para contadores */
+.counter {
+  animation: countUp 0.8s ease-out;
 }
 
-.admin-header h2 {
-  margin: 0;
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.user-login-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+/* Efecto de pulso para elementos de carga */
+.pulse-loading {
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
-.user-login-section span {
-  font-size: 1rem;
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
-.logout-button {
-  background-color: #ff4d4d;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+/* Backdrop blur más suave */
+.backdrop-blur-soft {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.logout-button:hover {
-  background-color: #d43f3f;
+/* Gradientes personalizados mejorados */
+.gradient-amber-modern {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b  50%, #d97706 100%);
 }
 
-/* Barra de navegación */
-.admin-nav {
-  width: 100%;
-  background-color: #007bff;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
+.gradient-card-hover {
+  background: linear-gradient(135deg, #ffffff 0%, #fef3c7 50%, #fde68a 100%);
 }
 
-.admin-nav ul {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* Sombras modernas */
+.shadow-modern {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-.admin-nav li {
-  font-size: 1rem;
+.shadow-modern-hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-.admin-nav a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s ease;
+/* Override para enlaces sin subrayado */
+.no-underline {
+  text-decoration: none !important;
 }
 
-.admin-nav a:hover {
-  color: #ffdd57;
+.no-underline:hover {
+  text-decoration: none !important;
 }
 
-/* Información del usuario */
-.user-info {
-  background-color: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  text-align: center;
+/* Estilos para sidebar */
+.sidebar-link {
+  color: white !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.user-info p {
-  font-size: 1.2rem;
-  color: #333;
+.sidebar-link:hover {
+  color: white !important;
+  text-decoration: none !important;
+  transform: translateX(4px);
 }
 
-/* Contenido principal */
-.admin-content {
-  width: 100%;
-  max-width: 1700px;
-  background-color: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* Estilos específicos para sidebar retraído */
+.sidebar-tooltip {
+  z-index: 1000;
+  pointer-events: none;
+  white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Cards generales */
-.card {
-  padding: 1.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
+/* Efectos hover mejorados para elementos del sidebar */
+.sidebar-link {
+  position: relative;
+  overflow: visible;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+.sidebar-link:hover {
+  transform: translateX(2px);
 }
 
-/* Card de Platos */
-.card-dishes {
-  background-color: #8b4513; /* Marrón medio */
-  color: #ffffff; /* Texto blanco */
+/* Mejor contraste para iconos en sidebar retraído */
+.sidebar-collapsed-icon {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
-.card-dishes:hover {
-  background-color: #a88165; /* Beige claro */
+/* Indicador activo mejorado */
+.active-indicator {
+  animation: glow 2s ease-in-out infinite alternate;
 }
 
-/* Card de Usuarios */
-.card-users {
-  background-color: #4caf50; /* Verde oscuro */
-  color: #ffffff; /* Texto blanco */
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+  }
+  to {
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
+  }
 }
 
-.card-users:hover {
-  background-color: #66bb6a; /* Verde claro */
+/* Efectos de glassmorphism */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Card de Explora más */
-.card-explore {
-  background: linear-gradient(to top right, #5c2b08, #8b4513, #a88165);
-  color: #ffffff; /* Texto blanco */
+/* Animación de entrada para cards */
+.card-entrance {
+  animation: cardEntrance 0.6s ease-out forwards;
 }
 
-.card-explore button {
-  background-color: #8b4513; /* Marrón medio */
-  color: #ffffff; /* Texto blanco */
-  border: none;
-  border-radius: 1rem;
-  padding: 0.5rem 1rem;
-  transition: background-color 0.3s ease;
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-.card-explore button:hover {
-  background-color: #a88165; /* Beige claro */
+/* Efecto de hover para métricas */
+.metric-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metric-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* Barras de progreso animadas */
+.progress-bar {
+  animation: progressFill 1.5s ease-out;
+}
+
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--progress-width);
+  }
+}
+
+/* Efectos de onda para botones */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-ripple:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .card-entrance {
+    animation-delay: 0.1s;
+  }
+  
+  .metric-card:hover {
+    transform: scale(1.02);
+  }
 }

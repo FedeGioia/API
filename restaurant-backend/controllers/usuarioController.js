@@ -86,3 +86,38 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'Error en login' });
   }
 };
+
+exports.obtenerCrecimiento = async (req, res) => {
+  try {
+    const { Sequelize } = require('sequelize');
+    const db = require('../config/db');
+    
+    // Obtener usuarios creados por mes en los últimos 6 meses
+    const crecimiento = await Usuario.findAll({
+      attributes: [
+        [Sequelize.fn('DATE_FORMAT', Sequelize.col('fecha_creacion'), '%Y-%m'), 'mes'],
+        [Sequelize.fn('COUNT', Sequelize.col('id')), 'cantidad']
+      ],
+      where: {
+        eliminado: false,
+        fecha_creacion: {
+          [Sequelize.Op.gte]: Sequelize.literal("DATE_SUB(NOW(), INTERVAL 6 MONTH)")
+        }
+      },
+      group: [Sequelize.fn('DATE_FORMAT', Sequelize.col('fecha_creacion'), '%Y-%m')],
+      order: [[Sequelize.fn('DATE_FORMAT', Sequelize.col('fecha_creacion'), '%Y-%m'), 'ASC']],
+      raw: true
+    });
+
+    // Formatear los datos para el gráfico
+    const datosFormateados = crecimiento.map(item => ({
+      mes: item.mes,
+      usuarios: parseInt(item.cantidad)
+    }));
+
+    res.json(datosFormateados);
+  } catch (err) {
+    console.error('Error al obtener crecimiento de usuarios:', err);
+    res.status(500).json({ error: 'Error al obtener datos de crecimiento' });
+  }
+};

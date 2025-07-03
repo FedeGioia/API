@@ -25,7 +25,7 @@ const About = () => {
         backgroundSize: "30px 30px",
       }}
     >
-      <div className="bg-gradient-to-b from-amber-600 to-amber-500 shadow-lg rounded-2xl w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center my-12 p-6 md:p-16 min-h-[350px] md:min-h-[500px]">
+      <div className="bg-gradient-to-b from-amber-900 to-amber-500 shadow-lg rounded-2xl w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center my-12 p-6 md:p-16 min-h-[350px] md:min-h-[500px]">
         {/* Imagen a la izquierda */}
         <div className="w-full md:w-1/2 flex justify-center mb-6 md:mb-0 md:mr-16">
           <img
@@ -43,7 +43,7 @@ const About = () => {
         Descubrí una experiencia culinaria única donde la pasión por los ingredientes se encuentra con la creatividad.
           </p>
           <button
-            className="bg-white text-amber-700 font-bold px-6 py-3 md:px-10 md:py-5 rounded-2xl shadow-xl hover:bg-amber-800 hover:text-black transition text-lg md:text-2xl border-4 border-amber-700 hover:border-black font-sans"
+            className="bg-white text-amber-900 font-bold px-6 py-3 md:px-10 md:py-5 rounded-2xl shadow-xl hover:bg-amber-800 hover:text-black transition text-lg md:text-2xl border-4 border-amber-700 hover:border-black font-sans"
             onClick={() => navigate("/menu")}
           >
             Ver Menu
@@ -51,7 +51,7 @@ const About = () => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-amber-600 to-amber-500 shadow-lg rounded-2xl w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center my-12 p-6 md:p-16 min-h-[350px] md:min-h-[500px]">
+      <div className="bg-gradient-to-b from-amber-900 to-amber-500 shadow-lg rounded-2xl w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center my-12 p-6 md:p-16 min-h-[350px] md:min-h-[500px]">
         {/* Info de ubicación a la izquierda */}
         <div className="w-full md:w-1/2 flex flex-col items-center text-center mb-6 md:mb-0 md:mr-16">
           <h2 className="text-3xl md:text-6xl font-serif font-extrabold mb-4 md:mb-8 text-white drop-shadow-lg">Ubicación</h2>
@@ -84,7 +84,7 @@ const About = () => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-amber-600 to-amber-500 shadow-lg rounded-2xl w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center my-12 p-6 md:p-16 min-h-[350px] md:min-h-[500px]">
+      <div className="bg-gradient-to-b from-amber-900 to-amber-500 shadow-lg rounded-2xl w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center my-12 p-6 md:p-16 min-h-[350px] md:min-h-[500px]">
         {/* Imagen a la izquierda */}
         <div className="w-full md:w-1/2 flex justify-center mb-6 md:mb-0 md:mr-16">
           <img
@@ -119,7 +119,7 @@ const About = () => {
 
 
       
-      <div className="bg-gradient-to-b from-amber-600 to-amber-500 shadow-lg rounded-2xl w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center my-12 p-6 md:p-16 min-h-[350px] md:min-h-[500px]">
+      <div className="bg-gradient-to-b from-amber-900 to-amber-500 shadow-lg rounded-2xl w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center my-12 p-6 md:p-16 min-h-[350px] md:min-h-[500px]">
         {/* Galería de imágenes */}
       <div className="max-w-6xl w-full mt-2">
         <h2 className="text-3xl md:text-6xl font-serif font-extrabold mb-8 pb-4 md:mb-8 text-white drop-shadow-lg">Galería</h2>
@@ -155,7 +155,7 @@ const About = () => {
               className="max-w-full max-h-screen rounded-lg"
             />
             <button
-              className="absolute top-4 right-4 bg-white text-black px-4 py-2 rounded-full shadow-md hover:bg-gray-200"
+              className="absolute top-4 right-4 bg-amber-600 text-white px-4 py-2 rounded-full shadow-md hover:bg-amber-700 transition duration-200 font-medium"
               onClick={closeImage}
             >
               Cerrar

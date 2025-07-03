@@ -110,117 +110,216 @@ const ManageDishes = () => {
     : [];
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Gestión de Platos</h1>
-
-      {/* Botón para abrir el modal */}
-      <button
-        className="mb-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition duration-200"
-        onClick={() => setShowAddDishModal(true)}
-      >
-        Agregar Plato
-      </button>
+    <div className="p-4 md:p-6 space-y-6">
+      {/* Header moderno */}
+      <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-6 shadow-lg border border-amber-200">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-amber-800 to-orange-600 bg-clip-text text-transparent mb-2">
+              Gestión de Platos
+            </h1>
+            <p className="text-amber-700 text-sm md:text-base">
+              Administra el menú completo de Essen Restaurant
+            </p>
+          </div>
+          <div className="mt-4 md:mt-0">
+            <button
+              className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold px-6 py-3 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              onClick={() => setShowAddDishModal(true)}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Agregar Plato
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Modal para agregar plato */}
       {showAddDishModal && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-            <h4 className="text-xl font-semibold mb-4 text-gray-800">Crear Nuevo Plato</h4>
-            <div className="flex gap-2 flex-wrap">
-              <input
-                type="text"
-                placeholder="Nombre del plato"
-                value={newDish.nombre}
-                onChange={(e) => setNewDish({ ...newDish, nombre: e.target.value })}
-                className="border border-gray-300 rounded px-4 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="text"
-                placeholder="Precio"
-                value={newDish.precio}
-                onChange={(e) => setNewDish({ ...newDish, precio: e.target.value })}
-                className="border border-gray-300 rounded px-4 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="text"
-                placeholder="Descripción"
-                value={newDish.descripcion}
-                onChange={(e) => setNewDish({ ...newDish, descripcion: e.target.value })}
-                className="border border-gray-300 rounded px-4 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="text"
-                placeholder="Imagen (filename)"
-                value={newDish.image}
-                onChange={(e) => setNewDish({ ...newDish, image: e.target.value })}
-                className="border border-gray-300 rounded px-4 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <div className="flex items-center gap-2 w-full">
-                <select
-                  value={newDish.categoria_id}
-                  onChange={(e) => setNewDish({ ...newDish, categoria_id: e.target.value, subcategoria_id: "" })}
-                  className="border border-gray-300 rounded px-4 py-2 text-sm flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Categoría</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.nombre}
-                    </option>
-                  ))}
-                </select>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          {/* Modal principal */}
+          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-4xl mx-4 overflow-hidden">
+            {/* Header del modal */}
+            <div className="bg-gradient-to-r from-amber-600 to-orange-600 p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white/20 rounded-xl">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-white">Crear Nuevo Plato</h4>
+                    <p className="text-amber-100 text-sm">Añade un nuevo plato al menú de Essen</p>
+                  </div>
+                </div>
                 <button
-                  onClick={() => setShowAddCategoryForm((prev) => !prev)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm shadow-md transition duration-200"
+                  onClick={() => setShowAddDishModal(false)}
+                  className="p-2 hover:bg-white/20 rounded-xl transition-colors duration-200"
                 >
-                  +
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
-              {showAddCategoryForm && (
-                <div className="w-full bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+            </div>
+
+            {/* Contenido del modal */}
+            <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+              {/* Información básica */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">Nombre del plato</label>
                   <input
                     type="text"
-                    placeholder="Nueva Categoría"
+                    placeholder="Ej: Paella Valenciana"
+                    value={newDish.nombre}
+                    onChange={(e) => setNewDish({ ...newDish, nombre: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">Precio (€)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="15.50"
+                    value={newDish.precio}
+                    onChange={(e) => setNewDish({ ...newDish, precio: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Descripción</label>
+                <textarea
+                  placeholder="Descripción detallada del plato..."
+                  value={newDish.descripcion}
+                  onChange={(e) => setNewDish({ ...newDish, descripcion: e.target.value })}
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 resize-none"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Imagen</label>
+                <input
+                  type="text"
+                  placeholder="nombre-imagen.jpg"
+                  value={newDish.image}
+                  onChange={(e) => setNewDish({ ...newDish, image: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
+                />
+              </div>
+
+              {/* Categorías */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">Categoría</label>
+                  <div className="flex gap-2">
+                    <select
+                      value={newDish.categoria_id}
+                      onChange={(e) => setNewDish({ ...newDish, categoria_id: e.target.value, subcategoria_id: "" })}
+                      className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-gray-700"
+                    >
+                      <option value="" className="text-gray-500">Seleccionar categoría</option>
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.nombre}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => setShowAddCategoryForm((prev) => !prev)}
+                      className="px-3 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl shadow-md transition-all duration-200 hover:scale-105"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">Subcategoría</label>
+                  <div className="flex gap-2">
+                    <select
+                      value={newDish.subcategoria_id}
+                      onChange={(e) => setNewDish({ ...newDish, subcategoria_id: e.target.value })}
+                      disabled={!newDish.categoria_id}
+                      className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-700"
+                    >
+                      <option value="" className="text-gray-500">Seleccionar subcategoría</option>
+                      {filteredSubcategories.map((sub) => (
+                        <option key={sub.id} value={sub.id}>
+                          {sub.nombre}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => setShowAddSubcategoryForm((prev) => !prev)}
+                      disabled={!newDish.categoria_id}
+                      className="px-3 py-3 bg-gray-400 hover:bg-gray-500 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-xl shadow-md transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Formulario para nueva categoría */}
+              {showAddCategoryForm && (
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <h5 className="font-semibold text-gray-700 text-sm">Nueva Categoría</h5>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Nombre de la categoría"
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
-                    className="border border-gray-300 rounded px-4 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-sm"
                   />
-                  <button
-                    onClick={handleAddCategory}
-                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm mt-2 w-full shadow-md transition duration-200"
-                  >
-                    Crear Categoría
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleAddCategory}
+                      className="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white py-2 px-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 text-sm"
+                    >
+                      Crear
+                    </button>
+                    <button
+                      onClick={() => setShowAddCategoryForm(false)}
+                      className="px-3 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg font-medium transition-all duration-200 text-sm"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               )}
-              <div className="flex items-center gap-2 w-full">
-                <select
-                  value={newDish.subcategoria_id}
-                  onChange={(e) => setNewDish({ ...newDish, subcategoria_id: e.target.value })}
-                  className="border border-gray-300 rounded px-4 py-2 text-sm flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={!newDish.categoria_id}
-                >
-                  <option value="">Subcategoría</option>
-                  {filteredSubcategories.map((sub) => (
-                    <option key={sub.id} value={sub.id}>
-                      {sub.nombre}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={() => setShowAddSubcategoryForm((prev) => !prev)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm shadow-md transition duration-200"
-                >
-                  +
-                </button>
-              </div>
+
+              {/* Formulario para nueva subcategoría */}
               {showAddSubcategoryForm && (
-                <div className="w-full bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <h5 className="font-semibold text-gray-700 text-sm">Nueva Subcategoría</h5>
+                  </div>
                   <select
                     value={newSubcategory.categoria_id}
                     onChange={(e) => setNewSubcategory({ ...newSubcategory, categoria_id: e.target.value })}
-                    className="border border-gray-300 rounded px-4 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-sm"
                   >
-                    <option value="">Seleccionar Categoría</option>
+                    <option value="">Seleccionar categoría padre</option>
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.nombre}
@@ -229,31 +328,46 @@ const ManageDishes = () => {
                   </select>
                   <input
                     type="text"
-                    placeholder="Nueva Subcategoría"
+                    placeholder="Nombre de la subcategoría"
                     value={newSubcategory.nombre}
                     onChange={(e) => setNewSubcategory({ ...newSubcategory, nombre: e.target.value })}
-                    className="border border-gray-300 rounded px-4 py-2 text-sm w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-sm"
                   />
-                  <button
-                    onClick={handleAddSubcategory}
-                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm mt-2 w-full shadow-md transition duration-200"
-                  >
-                    Crear Subcategoría
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleAddSubcategory}
+                      className="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white py-2 px-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 text-sm"
+                    >
+                      Crear
+                    </button>
+                    <button
+                      onClick={() => setShowAddSubcategoryForm(false)}
+                      className="px-3 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg font-medium transition-all duration-200 text-sm"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               )}
-              <div className="flex gap-2 w-full">
-                <button
-                  onClick={handleAddDish}
-                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm w-full shadow-md transition duration-200"
-                >
-                  Crear
-                </button>
+            </div>
+
+            {/* Footer del modal */}
+            <div className="bg-gray-50 p-4 border-t border-gray-200">
+              <div className="flex gap-3 justify-end">
                 <button
                   onClick={() => setShowAddDishModal(false)}
-                  className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg text-sm w-full shadow-md transition duration-200"
+                  className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-sm"
                 >
                   Cancelar
+                </button>
+                <button
+                  onClick={handleAddDish}
+                  className="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-semibold shadow-md transition-all duration-200 hover:scale-105 flex items-center gap-2 text-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Crear Plato
                 </button>
               </div>
             </div>
@@ -261,48 +375,88 @@ const ManageDishes = () => {
         </div>
       )}
 
-      {/* Listar Platos */}
-      <h4 className="text-xl font-semibold mb-4 mt-6 text-gray-800">Lista de Platos</h4>
-      <table className="table-auto border-collapse border border-gray-300 w-full text-sm bg-white rounded-lg shadow-md">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="border border-gray-300 px-4 py-2 text-left">Nombre</th>
-            <th className="border border-gray-300 px-4 py-2 text-left">Precio</th>
-            <th className="border border-gray-300 px-4 py-2 text-left">Descripción</th>
-            <th className="border border-gray-300 px-4 py-2 text-left">Categoría</th>
-            <th className="border border-gray-300 px-4 py-2 text-left">Subcategoría</th>
-            <th className="border border-gray-300 px-4 py-2 text-left">Disponible</th>
-            <th className="border border-gray-300 px-4 py-2 text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dishes.map((dish, index) => {
-            const categoria = dish.categoria ? categories.find((c) => String(c.id) === String(dish.categoria.id)) : null;
-            const subcategoria = dish.subcategoria ? subcategories.find((s) => String(s.id) === String(dish.subcategoria.id)) : null;
+      {/* Lista de Platos moderna */}
+      <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-6 shadow-lg border border-amber-200">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl">
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+          <h4 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-amber-800 to-orange-600 bg-clip-text text-transparent mb-2">Lista de Platos</h4>
+        </div>
 
-            return (
-              <tr key={dish.id} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
-                <td className="border border-gray-300 px-4 py-2">{dish.nombre}</td>
-                <td className="border border-gray-300 px-4 py-2">{dish.precio} €</td>
-                <td className="border border-gray-300 px-4 py-2">{dish.descripcion}</td>
-                <td className="border border-gray-300 px-4 py-2">{categoria ? categoria.nombre : ""}</td>
-                <td className="border border-gray-300 px-4 py-2">{subcategoria ? subcategoria.nombre : ""}</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {dish.disponible === true || dish.disponible === "true" ? "Sí" : "No"}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  <button
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm shadow-md transition duration-200"
-                    onClick={() => console.log("Modificar plato", dish)}
-                  >
-                    Modificar
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gradient-to-r from-amber-700 to-amber-600 rounded-2xl">
+                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider rounded-l-2xl">Nombre</th>
+                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider">Precio</th>
+                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider">Descripción</th>
+                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider">Categoría</th>
+                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider">Subcategoría</th>
+                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider">Disponible</th>
+                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider rounded-r-2xl">Acciones</th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody className="space-y-2">
+              {dishes.map((dish, index) => {
+                const categoria = dish.categoria ? categories.find((c) => String(c.id) === String(dish.categoria.id)) : null;
+                const subcategoria = dish.subcategoria ? subcategories.find((s) => String(s.id) === String(dish.subcategoria.id)) : null;
+
+                return (
+                  <tr key={dish.id} className="group hover:bg-amber-50/50 transition-all duration-200">
+                    <td className="px-6 py-4 border-b border-amber-100">
+                      <div className="font-medium text-gray-900">{dish.nombre}</div>
+                    </td>
+                    <td className="px-6 py-4 border-b border-amber-100">
+                      <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium">
+                        {dish.precio} €
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 border-b border-amber-100">
+                      <div className="text-gray-600 text-sm max-w-xs" title={dish.descripcion}>
+                        {dish.descripcion}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 border-b border-amber-100">
+                      <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                        {categoria ? categoria.nombre : "N/A"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 border-b border-amber-100">
+                      <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                        {subcategoria ? subcategoria.nombre : "N/A"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 border-b border-amber-100">
+                      {dish.disponible === true || dish.disponible === "true" ? (
+                        <span className="flex items-center gap-1 text-green-600 text-sm font-medium">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          Disponible
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-red-600 text-sm font-medium">
+                          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                          No disponible
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 border-b border-amber-100">
+                      <button
+                        className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-md transition-all duration-200 hover:scale-105"
+                        onClick={() => console.log("Modificar plato", dish)}
+                      >
+                        Modificar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
