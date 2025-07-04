@@ -8,7 +8,7 @@ const Subcategoria = db.define('Subcategoria', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'categorias',
+      model: 'categoria',
       key: 'id'
     }
   },
@@ -25,7 +25,7 @@ const Subcategoria = db.define('Subcategoria', {
     allowNull: true
   }
 }, {
-  tableName: 'subcategorias',
+  tableName: 'subcategoria',
   timestamps: true,
   createdAt: 'fecha_creacion',
   updatedAt: 'fecha_modificacion'

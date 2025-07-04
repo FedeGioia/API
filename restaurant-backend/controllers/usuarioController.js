@@ -11,7 +11,8 @@ exports.listar = async (req, res) => {
     });
     res.json(usuarios);
   } catch (err) {
-    res.status(500).json({ error: 'Error al listar usuarios' });
+    console.error('Error al listar usuarios:', err); // Log detallado del error
+    res.status(500).json({ error: 'Error al listar usuarios', detalles: err.message });
   }
 };
 

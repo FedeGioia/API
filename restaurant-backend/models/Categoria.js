@@ -25,7 +25,7 @@ const Categoria = db.define('Categoria', {
     allowNull: true
   }
 }, {
-  tableName: 'categorias',
+  tableName: 'categoria',
   timestamps: true,
   createdAt: 'fecha_creacion',
   updatedAt: 'fecha_modificacion'
