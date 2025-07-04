@@ -13,6 +13,7 @@ const ManageDishes = () => {
     image: "",
     categoria_id: "",
     subcategoria_id: "",
+    eliminado: false
   });
 
   const [showAddDishModal, setShowAddDishModal] = useState(false);
@@ -29,10 +30,14 @@ const ManageDishes = () => {
       precio: "",
       descripcion: "",
       image: "",
+      imageFile: null,
+      imagePreview: "",
+      imageUrl: "",
       categoria_id: "",
       subcategoria_id: "",
       alergenos: [],
       disponible: true,
+      eliminado: false
     },
     loading: false,
     error: null,
@@ -80,9 +85,14 @@ const ManageDishes = () => {
     try {
       const res = await fetch("http://localhost:3000/api/alergenos");
       const data = await res.json();
-      setAlergenos(data);
+      // Asegurar que siempre sea un array
+      const alergenosArray = Array.isArray(data) ? data : [];
+      setAlergenos(alergenosArray);
+      console.log('✅ Alérgenos cargados:', alergenosArray);
     } catch (e) {
       console.error("Error fetching alergenos", e);
+      // En caso de error, establecer array vacío
+      setAlergenos([]);
     }
   };
 
@@ -118,6 +128,61 @@ const ManageDishes = () => {
     }
   };
 
+  // Función helper para convertir archivo a base64
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result.split(',')[1]; // Remover el prefijo data:image/...;base64,
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Función para manejar la carga de archivos de imagen
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setDishModal((prev) => ({
+          ...prev,
+          data: {
+            ...prev.data,
+            image: file.name,
+            imageFile: file,
+            imagePreview: e.target.result,
+            imageUrl: ""
+          }
+        }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('Por favor selecciona un archivo de imagen válido');
+    }
+  };
+
+  // Función para remover la imagen seleccionada
+  const removeImage = () => {
+    setDishModal((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        image: "",
+        imageFile: null,
+        imagePreview: "",
+        imageUrl: ""
+      }
+    }));
+    // Limpiar el input file
+    const fileInput = document.getElementById('image-upload');
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
+
   const handleAddDish = async () => {
     if (!newDish.nombre.trim() || !newDish.precio || !newDish.categoria_id || !newDish.subcategoria_id) return;
     try {
@@ -127,7 +192,7 @@ const ManageDishes = () => {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(newDish),
       });
-      setNewDish({ nombre: "", precio: "", descripcion: "", image: "", categoria_id: "", subcategoria_id: "" });
+      setNewDish({ nombre: "", precio: "", descripcion: "", image: "", categoria_id: "", subcategoria_id: "" , eliminado: false });
       fetchDishes();
       setShowAddDishModal(false); // Cierra el modal después de agregar el plato
     } catch (e) {
@@ -135,8 +200,8 @@ const ManageDishes = () => {
     }
   };
 
-  const filteredSubcategories = newDish.categoria_id
-    ? subcategories.filter((s) => String(s.categoria_id) === String(newDish.categoria_id))
+  const filteredSubcategories = dishModal.data.categoria_id
+    ? subcategories.filter((s) => String(s.categoria_id) === String(dishModal.data.categoria_id))
     : [];
 
   const openCreateDishModal = () => {
@@ -148,6 +213,9 @@ const ManageDishes = () => {
         precio: "",
         descripcion: "",
         image: "",
+        imageFile: null,
+        imagePreview: "",
+        imageUrl: "",
         categoria_id: "",
         subcategoria_id: "",
         alergenos: [],
@@ -168,6 +236,10 @@ const ManageDishes = () => {
         alergenos: Array.isArray(dish.alergenos)
           ? dish.alergenos.map((a) => (typeof a === "object" ? a.id : a))
           : [],
+        // Configurar la imagen para edición
+        imageFile: null,
+        imagePreview: dish.image || "",
+        imageUrl: dish.image && !dish.image.startsWith('data:') ? dish.image : "",
       },
       loading: false,
       error: null,
@@ -176,7 +248,30 @@ const ManageDishes = () => {
   };
 
   const closeDishModal = () => {
-    setDishModal((prev) => ({ ...prev, open: false, error: null, success: null }));
+    setDishModal((prev) => ({ 
+      ...prev, 
+      open: false, 
+      error: null, 
+      success: null,
+      data: {
+        nombre: "",
+        precio: "",
+        descripcion: "",
+        image: "",
+        imageFile: null,
+        imagePreview: "",
+        imageUrl: "",
+        categoria_id: "",
+        subcategoria_id: "",
+        alergenos: [],
+        disponible: true,
+      }
+    }));
+    // Limpiar el input file
+    const fileInput = document.getElementById('image-upload');
+    if (fileInput) {
+      fileInput.value = '';
+    }
   };
 
   const isDuplicateDish = (nombre, categoria_id, subcategoria_id, id = null) => {
@@ -190,53 +285,115 @@ const ManageDishes = () => {
   };
 
   const handleSaveDish = async () => {
+    console.log('=== INICIANDO GUARDADO DE PLATO ===');
     setDishModal((prev) => ({ ...prev, loading: true, error: null, success: null }));
-    const { nombre, precio, descripcion, image, categoria_id, subcategoria_id, alergenos, disponible } = dishModal.data;
-    if (!nombre.trim() || !precio || !categoria_id || !subcategoria_id) {
-      setDishModal((prev) => ({ ...prev, loading: false, error: "Completa todos los campos obligatorios." }));
+    
+    const { nombre, precio, descripcion, categoria_id, subcategoria_id, alergenos, disponible, imageFile, imageUrl } = dishModal.data;
+    
+    console.log('Datos del modal:', dishModal.data);
+    
+    // Validaciones básicas
+    if (!nombre.trim()) {
+      setDishModal((prev) => ({ ...prev, loading: false, error: "El nombre es obligatorio." }));
+      return;
+    }
+    if (!precio) {
+      setDishModal((prev) => ({ ...prev, loading: false, error: "El precio es obligatorio." }));
+      return;
+    }
+    if (!categoria_id) {
+      setDishModal((prev) => ({ ...prev, loading: false, error: "Selecciona una categoría." }));
+      return;
+    }
+    if (!subcategoria_id) {
+      setDishModal((prev) => ({ ...prev, loading: false, error: "Selecciona una subcategoría." }));
       return;
     }
     if (isNaN(precio) || Number(precio) <= 0) {
       setDishModal((prev) => ({ ...prev, loading: false, error: "El precio debe ser un número positivo." }));
       return;
     }
-    if (isDuplicateDish(nombre, categoria_id, subcategoria_id, dishModal.editing ? dishModal.data.id : null)) {
-      setDishModal((prev) => ({ ...prev, loading: false, error: "Ya existe un plato con ese nombre en esta categoría y subcategoría." }));
-      return;
-    }
-    if (!Array.isArray(alergenos) || alergenos.some((a) => !alergenos.includes(a))) {
-      setDishModal((prev) => ({ ...prev, loading: false, error: "Selecciona alérgenos válidos." }));
-      return;
-    }
+
     try {
       const token = localStorage.getItem("token");
+      console.log('Token:', token ? 'Existe' : 'No existe');
+      
+      // Preparar imagen de forma simple
+      let finalImageData = "";
+      if (imageFile) {
+        finalImageData = imageFile.name;
+      } else if (imageUrl && imageUrl.trim()) {
+        finalImageData = imageUrl.trim();
+      }
+
+      const requestData = {
+        nombre: nombre.trim(),
+        precio: parseFloat(precio),
+        descripcion: descripcion.trim() || "",
+        image: finalImageData,
+        categoria_id: parseInt(categoria_id),
+        subcategoria_id: parseInt(subcategoria_id),
+        alergenos: Array.isArray(alergenos) ? alergenos : [],
+        disponible: disponible !== false,
+        eliminado: false  // Agregar el campo eliminado que espera el backend
+      };
+
+      console.log('Datos a enviar:', requestData);
+
       const url = dishModal.editing
         ? `http://localhost:3000/api/platos/${dishModal.data.id}`
         : "http://localhost:3000/api/platos";
       const method = dishModal.editing ? "PUT" : "POST";
+      
+      console.log(`Enviando ${method} a ${url}`);
+
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          nombre,
-          precio,
-          descripcion,
-          image,
-          categoria_id,
-          subcategoria_id,
-          alergenos,
-          disponible,
-        }),
+        headers: { 
+          "Content-Type": "application/json", 
+          ...(token && { Authorization: `Bearer ${token}` })
+        },
+        body: JSON.stringify(requestData),
       });
+      
+      console.log('Respuesta del servidor:', res.status, res.statusText);
+      
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Error al guardar el plato");
+        let errorMessage;
+        try {
+          const errorData = await res.json();
+          console.error('Error del servidor:', errorData);
+          
+          // Manejo específico de errores de validación
+          if (errorData.errors) {
+            errorMessage = errorData.errors.map(err => err.msg).join(', ');
+          } else if (errorData.validationErrors) {
+            errorMessage = errorData.validationErrors.map(err => `${err.field}: ${err.message}`).join(', ');
+          } else if (errorData.details) {
+            errorMessage = `${errorData.error}: ${errorData.details}`;
+          } else {
+            errorMessage = errorData.message || errorData.error || `Error ${res.status}`;
+          }
+        } catch {
+          errorMessage = `Error del servidor: ${res.status} ${res.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
-      setDishModal((prev) => ({ ...prev, loading: false, success: "Plato guardado con éxito!" }));
+      
+      const result = await res.json();
+      console.log('Plato guardado exitosamente:', result);
+      
+      setDishModal((prev) => ({ ...prev, loading: false, success: "¡Plato guardado con éxito!" }));
       fetchDishes();
-      setTimeout(() => closeDishModal(), 1200);
+      setTimeout(() => closeDishModal(), 2000);
+      
     } catch (e) {
-      setDishModal((prev) => ({ ...prev, loading: false, error: e.message || "Error al guardar el plato" }));
+      console.error('Error completo:', e);
+      setDishModal((prev) => ({ 
+        ...prev, 
+        loading: false, 
+        error: e.message || "Error desconocido al guardar el plato" 
+      }));
     }
   };
 
@@ -339,13 +496,75 @@ const ManageDishes = () => {
 
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-gray-700">Imagen</label>
-                <input
-                  type="text"
-                  placeholder="nombre-imagen.jpg"
-                  value={dishModal.data.image}
-                  onChange={(e) => setDishModal((prev) => ({ ...prev, data: { ...prev.data, image: e.target.value } }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
-                />
+                <div className="space-y-3">
+                  {/* Input de archivo */}
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label
+                      htmlFor="image-upload"
+                      className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl cursor-pointer transition-all duration-200 hover:scale-105"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      Seleccionar imagen
+                    </label>
+                    {dishModal.data.image && dishModal.data.imageFile && (
+                      <span className="text-sm text-gray-600">
+                        {dishModal.data.imageFile.name}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Preview de la imagen */}
+                  {dishModal.data.imagePreview && (
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="relative">
+                        <img
+                          src={dishModal.data.imagePreview}
+                          alt="Preview"
+                          className="w-32 h-32 object-cover rounded-xl border-2 border-gray-200"
+                        />
+                        <button
+                          type="button"
+                          onClick={removeImage}
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors duration-200"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                      <span className="text-xs text-gray-500">Vista previa</span>
+                    </div>
+                  )}
+                  
+                  {/* Fallback: input de texto para URL */}
+                  <div className="border-t pt-3">
+                    <label className="block text-xs font-medium text-gray-500 mb-2">O ingresa una URL de imagen:</label>
+                    <input
+                      type="text"
+                      placeholder="https://ejemplo.com/imagen.jpg"
+                      value={dishModal.data.imageUrl || ""}
+                      onChange={(e) => setDishModal((prev) => ({ 
+                        ...prev, 
+                        data: { 
+                          ...prev.data, 
+                          imageUrl: e.target.value,
+                          image: e.target.value,
+                          imagePreview: e.target.value
+                        } 
+                      }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-sm"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Categorías */}
@@ -522,13 +741,22 @@ const ManageDishes = () => {
               </div>
 
               {/* Feedback */}
+              {/* Mensajes de estado */}
               {dishModal.loading && (
                 <div className="text-center text-amber-700 text-sm">
-                  {dishModal.error ? (
-                    <span className="text-red-600">{dishModal.error}</span>
-                  ) : (
-                    <span className="text-green-600">{dishModal.success}</span>
-                  )}
+                  Guardando plato...
+                </div>
+              )}
+              
+              {dishModal.error && (
+                <div className="text-center text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-200">
+                  {dishModal.error}
+                </div>
+              )}
+              
+              {dishModal.success && (
+                <div className="text-center text-green-600 text-sm bg-green-50 p-3 rounded-lg border border-green-200">
+                  {dishModal.success}
                 </div>
               )}
             </div>

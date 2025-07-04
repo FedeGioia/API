@@ -6,15 +6,16 @@ const Subcategoria = require('./Subcategoria');
 
 const Plato = db.define('Plato', {
   nombre: { type: DataTypes.STRING, allowNull: false },
-  subcategoria_id: { type: DataTypes.STRING },
+  subcategoria_id: { type: DataTypes.INTEGER },
   descripcion: { type: DataTypes.TEXT },
   alergenos: { type: DataTypes.JSON },       
   precio: { type: DataTypes.FLOAT, allowNull: false },
   categoria_id: { type: DataTypes.INTEGER },
   disponible: { type: DataTypes.BOOLEAN, defaultValue: true },
   eliminado: { type: DataTypes.BOOLEAN, defaultValue: false },
-  usuario_modificacion: { type: DataTypes.STRING },
-  image:{ type: DataTypes.STRING },
+  // usuario_creacion: { type: DataTypes.STRING },
+  // usuario_modificacion: { type: DataTypes.STRING },
+  image: { type: DataTypes.STRING },
 }, {
   timestamps: true,
   createdAt: 'fecha_creacion',

@@ -69,17 +69,94 @@ function requireAdmin(req, res, next) {
 exports.validatePlato = [
   body('nombre').notEmpty().withMessage('El nombre es obligatorio'),
   body('precio').isFloat({ min: 0 }).withMessage('El precio debe ser un número positivo'),
-  // Agrega más validaciones según tu modelo
+  body('categoria_id').optional().isInt().withMessage('La categoría debe ser un número entero'),
+  body('subcategoria_id').optional().isInt().withMessage('La subcategoría debe ser un número entero'),
+  body('descripcion').optional().isString().withMessage('La descripción debe ser texto'),
+  body('image').optional().isString().withMessage('La imagen debe ser una URL o nombre de archivo'),
+  body('disponible').optional().isBoolean().withMessage('Disponible debe ser verdadero o falso'),
+  body('alergenos').optional().isArray().withMessage('Los alérgenos deben ser un array')
 ];
 
 exports.crear = [requireAdmin, exports.validatePlato, async (req, res) => {
+  console.log('=== CREAR PLATO - INICIO ===');
+  console.log('Usuario:', req.user);
+  console.log('Body recibido:', JSON.stringify(req.body, null, 2));
+  
   const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  if (!errors.isEmpty()) {
+    console.log('Errores de validación:', errors.array());
+    return res.status(400).json({ errors: errors.array() });
+  }
+  
   try {
-    const plato = await Plato.create(req.body);
-    res.status(201).json(plato);
+    // Validar que la categoría exista
+    if (req.body.categoria_id) {
+      const categoria = await Categoria.findByPk(req.body.categoria_id);
+      if (!categoria) {
+        console.log('Categoría no encontrada:', req.body.categoria_id);
+        return res.status(400).json({ error: 'La categoría especificada no existe' });
+      }
+      console.log('Categoría encontrada:', categoria.nombre);
+    }
+    
+    // Validar que la subcategoría exista y pertenezca a la categoría
+    if (req.body.subcategoria_id) {
+      const subcategoria = await Subcategoria.findByPk(req.body.subcategoria_id);
+      if (!subcategoria) {
+        console.log('Subcategoría no encontrada:', req.body.subcategoria_id);
+        return res.status(400).json({ error: 'La subcategoría especificada no existe' });
+      }
+      if (req.body.categoria_id && subcategoria.categoria_id !== parseInt(req.body.categoria_id)) {
+        console.log('Subcategoría no pertenece a la categoría:', subcategoria.categoria_id, '!=', req.body.categoria_id);
+        return res.status(400).json({ error: 'La subcategoría no pertenece a la categoría seleccionada' });
+      }
+      console.log('Subcategoría encontrada:', subcategoria.nombre);
+    }
+    
+    // Preparar datos del plato
+    const platoData = {
+      ...req.body,
+      // usuario_creacion: req.user ? req.user.nombre_usuario : 'admin',
+      fecha_creacion: new Date(),
+      eliminado: false
+    };
+    
+    console.log('Datos finales para crear plato:', JSON.stringify(platoData, null, 2));
+    
+    const plato = await Plato.create(platoData);
+    console.log('Plato creado exitosamente:', plato.toJSON());
+    
+    // Recargar el plato con las relaciones
+    const platoCompleto = await Plato.findByPk(plato.id, {
+      include: [
+        { model: Categoria, as: 'categoria', attributes: ['id', 'nombre'] },
+        { model: Subcategoria, as: 'subcategoria', attributes: ['id', 'nombre'] }
+      ]
+    });
+    
+    res.status(201).json(platoCompleto);
   } catch (err) {
-    res.status(400).json({ error: 'Error al crear plato' });
+    console.error('Error detallado al crear plato:', err);
+    console.error('Error name:', err.name);
+    console.error('Error message:', err.message);
+    if (err.errors) {
+      console.error('Validation errors:', err.errors.map(e => ({
+        field: e.path,
+        message: e.message,
+        value: e.value
+      })));
+    }
+    console.error('Stack trace:', err.stack);
+    
+    res.status(400).json({ 
+      error: 'Error al crear plato',
+      details: err.message,
+      validationErrors: err.errors ? err.errors.map(e => ({
+        field: e.path,
+        message: e.message,
+        value: e.value
+      })) : undefined
+    });
   }
 }];
 

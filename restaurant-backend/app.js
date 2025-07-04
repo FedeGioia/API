@@ -7,6 +7,7 @@ const usuarioRoutes = require('./routes/usuarios');
 const rolesRoutes = require('./routes/roles'); // Importa las rutas de roles
 const authRoutes = require('./routes/auth');
 const categoriaRoutes = require('./routes/categorias');
+const alergenoRoutes = require('./routes/alergenos');
 const db = require('./config/db');
 require('dotenv').config();
 
@@ -22,6 +23,7 @@ app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/roles', rolesRoutes);
 app.use('/api', authRoutes);
 app.use('/api', categoriaRoutes);
+app.use('/api/alergenos', alergenoRoutes);
 
 // Probar conexión DB
 (async () => {
