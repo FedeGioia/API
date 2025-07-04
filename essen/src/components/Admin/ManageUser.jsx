@@ -155,7 +155,7 @@ const ManageUsers = () => {
           </div>
           <div className="mt-4 md:mt-0">
             <button
-              className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold px-6 py-3 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold px-6 py-3 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 md:transform md:-translate-y-3"
               onClick={() => setShowAddUserModal(true)}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -288,24 +288,24 @@ const ManageUsers = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full border-separate border-spacing-0">
             <thead>
-              <tr className="bg-gradient-to-r from-gray-700 to-gray-600 rounded-2xl">
-                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider rounded-l-2xl">ID</th>
-                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider">Nombre Usuario</th>
-                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider">Email</th>
-                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider">Rol</th>
-                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider">Fecha Creación</th>
-                <th className="px-6 py-4 text-left text-white font-semibold text-sm tracking-wider rounded-r-2xl">Acciones</th>
+              <tr className="bg-gradient-to-r from-amber-600 to-orange-600 rounded-2xl">
+                <th className="px-6 py-4 text-center text-white font-semibold text-sm tracking-wider rounded-l-2xl border-l border-white/20 border-r border-white/20">ID</th>
+                <th className="px-6 py-4 text-center text-white font-semibold text-sm tracking-wider border-r border-white/20">Nombre Usuario</th>
+                <th className="px-6 py-4 text-center text-white font-semibold text-sm tracking-wider border-r border-white/20">Email</th>
+                <th className="px-6 py-4 text-center text-white font-semibold text-sm tracking-wider border-r border-white/20">Rol</th>
+                <th className="px-6 py-4 text-center text-white font-semibold text-sm tracking-wider border-r border-white/20">Fecha Creación</th>
+                <th className="px-6 py-4 text-center text-white font-semibold text-sm tracking-wider rounded-r-2xl border-r border-white/20">Acciones</th>
               </tr>
             </thead>
             <tbody className="space-y-2">
               {users.map((user, index) => (
                 <tr key={user.id} className="group hover:bg-amber-50/50 transition-all duration-200">
-                  <td className="px-6 py-4 border-b border-amber-100">
+                  <td className={`px-6 py-4 border-b border-amber-100 border-l border-gray-200 border-r border-gray-200 text-center ${index === users.length - 1 ? 'rounded-bl-2xl' : ''}`}>
                     <div className="font-medium text-gray-900">{user.id}</div>
                   </td>
-                  <td className="px-6 py-4 border-b border-amber-100">
+                  <td className={`px-6 py-4 border-b border-amber-100 border-r border-gray-200 text-center ${index === users.length - 1 ? 'border-b' : ''}`}>
                     {editableUserId === user.id ? (
                       <input
                         type="text"
@@ -317,13 +317,13 @@ const ManageUsers = () => {
                             )
                           )
                         }
-                        className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
+                        className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-center"
                       />
                     ) : (
                       <div className="font-medium text-gray-900">{user.nombre_usuario}</div>
                     )}
                   </td>
-                  <td className="px-6 py-4 border-b border-amber-100">
+                  <td className={`px-6 py-4 border-b border-amber-100 border-r border-gray-200 text-center ${index === users.length - 1 ? 'border-b' : ''}`}>
                     {editableUserId === user.id ? (
                       <input
                         type="email"
@@ -335,13 +335,13 @@ const ManageUsers = () => {
                             )
                           )
                         }
-                        className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
+                        className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-center"
                       />
                     ) : (
                       <div className="text-gray-600 text-sm">{user.email}</div>
                     )}
                   </td>
-                  <td className="px-6 py-4 border-b border-amber-100">
+                  <td className={`px-6 py-4 border-b border-amber-100 border-r border-gray-200 text-center ${index === users.length - 1 ? 'border-b' : ''}`}>
                     {editableUserId === user.id ? (
                       <select
                         value={user.rol_id}
@@ -352,7 +352,7 @@ const ManageUsers = () => {
                             )
                           )
                         }
-                        className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
+                        className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-center"
                       >
                         <option value="">Seleccionar Rol</option>
                         {roles.map((role) => (
@@ -367,13 +367,13 @@ const ManageUsers = () => {
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4 border-b border-amber-100">
+                  <td className={`px-6 py-4 border-b border-amber-100 border-r border-gray-200 text-center ${index === users.length - 1 ? 'border-b' : ''}`}>
                     <div className="text-gray-600 text-sm">
                       {new Date(user.fecha_creacion).toLocaleDateString('es-ES')}
                     </div>
                   </td>
-                  <td className="px-6 py-4 border-b border-amber-100">
-                    <div className="flex gap-2">
+                  <td className={`px-6 py-4 border-b border-amber-100 border-r border-gray-200 text-center ${index === users.length - 1 ? 'rounded-br-2xl' : ''}`}>
+                    <div className="flex gap-2 justify-center">
                       {editableUserId === user.id ? (
                         <button
                           className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-2 rounded-xl text-sm font-medium shadow-md transition-all duration-200 hover:scale-105"

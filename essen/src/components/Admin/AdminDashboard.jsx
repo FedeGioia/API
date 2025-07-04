@@ -250,7 +250,7 @@ const AdminLayout = () => {
                 }`}
                 title={!sidebarOpen ? "Dashboard" : ""}
               >
-                <div className={`rounded-xl transition-all duration-300 ${
+                <div className={`relative rounded-xl transition-all duration-300 ${
                   sidebarOpen ? "p-2" : "p-2"
                 } ${
                   location.pathname === "/admin" 
@@ -260,6 +260,9 @@ const AdminLayout = () => {
                   <svg className={`${sidebarOpen ? "w-4 h-4" : "w-6 h-6"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                   </svg>
+                  {location.pathname === "/admin" && !sidebarOpen && (
+                    <div className="bg-amber-400 rounded-full absolute w-2 h-2 top-1 right-1"></div>
+                  )}
                 </div>
                 {sidebarOpen && (
                   <div className="flex-1">
@@ -267,8 +270,8 @@ const AdminLayout = () => {
                     <p className="text-xs opacity-70">Vista general</p>
                   </div>
                 )}
-                {location.pathname === "/admin" && (
-                  <div className={`bg-amber-400 rounded-full absolute ${sidebarOpen ? "w-1 h-8 -right-1" : "w-2 h-2 top-2 right-2"}`}></div>
+                {location.pathname === "/admin" && sidebarOpen && (
+                  <div className="bg-amber-400 rounded-full absolute w-1 h-8 -right-1"></div>
                 )}
                 {!sidebarOpen && (
                   <div className="absolute left-full ml-2 px-2 py-1 bg-amber-900 text-amber-100 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50 pointer-events-none">
@@ -290,7 +293,7 @@ const AdminLayout = () => {
                 }`}
                 title={!sidebarOpen ? "Gestionar Platos" : ""}
               >
-                <div className={`rounded-xl transition-all duration-300 ${
+                <div className={`relative rounded-xl transition-all duration-300 ${
                   sidebarOpen ? "p-2" : "p-2"
                 } ${
                   location.pathname === "/admin/dishes" 
@@ -300,6 +303,9 @@ const AdminLayout = () => {
                   <svg className={`${sidebarOpen ? "w-4 h-4" : "w-6 h-6"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
+                  {location.pathname === "/admin/dishes" && !sidebarOpen && (
+                    <div className="bg-amber-400 rounded-full absolute w-2 h-2 top-1 right-1"></div>
+                  )}
                 </div>
                 {sidebarOpen && (
                   <div className="flex-1">
@@ -307,8 +313,8 @@ const AdminLayout = () => {
                     <p className="text-xs opacity-70">Gestionar menú</p>
                   </div>
                 )}
-                {location.pathname === "/admin/dishes" && (
-                  <div className={`bg-amber-400 rounded-full absolute ${sidebarOpen ? "w-1 h-8 -right-1" : "w-2 h-2 top-2 right-2"}`}></div>
+                {location.pathname === "/admin/dishes" && sidebarOpen && (
+                  <div className="bg-amber-400 rounded-full absolute w-1 h-8 -right-1"></div>
                 )}
                 {!sidebarOpen && (
                   <div className="absolute left-full ml-2 px-2 py-1 bg-amber-900 text-amber-100 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50 pointer-events-none">
@@ -330,7 +336,7 @@ const AdminLayout = () => {
                 }`}
                 title={!sidebarOpen ? "Gestionar Usuarios" : ""}
               >
-                <div className={`rounded-xl transition-all duration-300 ${
+                <div className={`relative rounded-xl transition-all duration-300 ${
                   sidebarOpen ? "p-2" : "p-2"
                 } ${
                   location.pathname === "/admin/users" 
@@ -340,6 +346,9 @@ const AdminLayout = () => {
                   <svg className={`${sidebarOpen ? "w-4 h-4" : "w-6 h-6"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                   </svg>
+                  {location.pathname === "/admin/users" && !sidebarOpen && (
+                    <div className="bg-amber-400 rounded-full absolute w-2 h-2 top-1 right-1"></div>
+                  )}
                 </div>
                 {sidebarOpen && (
                   <div className="flex-1">
@@ -347,8 +356,8 @@ const AdminLayout = () => {
                     <p className="text-xs opacity-70">Gestionar acceso</p>
                   </div>
                 )}
-                {location.pathname === "/admin/users" && (
-                  <div className={`bg-amber-400 rounded-full absolute ${sidebarOpen ? "w-1 h-8 -right-1" : "w-2 h-2 top-2 right-2"}`}></div>
+                {location.pathname === "/admin/users" && sidebarOpen && (
+                  <div className="bg-amber-400 rounded-full absolute w-1 h-8 -right-1"></div>
                 )}
                 {!sidebarOpen && (
                   <div className="absolute left-full ml-2 px-2 py-1 bg-amber-900 text-amber-100 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50 pointer-events-none">
@@ -378,7 +387,7 @@ const AdminLayout = () => {
                     </p>
                   </div>
                   <div className="mt-4 md:mt-0 text-right">
-                    <p className="text-xs text-amber-600 font-medium">
+                    <p className="text-xs text-amber-600 font-medium md:-translate-y-3">
                       {new Date().toLocaleDateString('es-ES', { 
                         weekday: 'long', 
                         year: 'numeric', 
@@ -386,8 +395,8 @@ const AdminLayout = () => {
                         day: 'numeric' 
                       })}
                     </p>
-                    <div className="flex items-center justify-end mt-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                    <div className="flex items-center justify-end mt-1 md:transform md:-translate-y-4">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
                       <span className="text-xs text-green-600 font-medium">Sistema Online</span>
                     </div>
                   </div>
@@ -532,7 +541,7 @@ const AdminLayout = () => {
                   <div className="flex items-center gap-3 mb-4">
                     <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-3 rounded-xl">
                       <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       </svg>
                     </div>
                     <h3 className="text-lg font-bold text-amber-900">Crecimiento de Usuarios</h3>
