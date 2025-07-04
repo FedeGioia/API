@@ -4,6 +4,7 @@ const ManageDishes = () => {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [dishes, setDishes] = useState([]);
+  const [alergenos, setAlergenos] = useState([]);
 
   const [newDish, setNewDish] = useState({
     nombre: "",
@@ -20,10 +21,29 @@ const ManageDishes = () => {
   const [newCategory, setNewCategory] = useState("");
   const [newSubcategory, setNewSubcategory] = useState({ nombre: "", categoria_id: "" });
 
+  const [dishModal, setDishModal] = useState({
+    open: false,
+    editing: false,
+    data: {
+      nombre: "",
+      precio: "",
+      descripcion: "",
+      image: "",
+      categoria_id: "",
+      subcategoria_id: "",
+      alergenos: [],
+      disponible: true,
+    },
+    loading: false,
+    error: null,
+    success: null,
+  });
+
   useEffect(() => {
     fetchCategories();
     fetchSubcategories();
     fetchDishes();
+    fetchAlergenos();
   }, []);
 
   const fetchCategories = async () => {
@@ -53,6 +73,16 @@ const ManageDishes = () => {
       setDishes(data);
     } catch (e) {
       console.error("Error fetching dishes", e);
+    }
+  };
+
+  const fetchAlergenos = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/alergenos");
+      const data = await res.json();
+      setAlergenos(data);
+    } catch (e) {
+      console.error("Error fetching alergenos", e);
     }
   };
 
@@ -109,6 +139,107 @@ const ManageDishes = () => {
     ? subcategories.filter((s) => String(s.categoria_id) === String(newDish.categoria_id))
     : [];
 
+  const openCreateDishModal = () => {
+    setDishModal({
+      open: true,
+      editing: false,
+      data: {
+        nombre: "",
+        precio: "",
+        descripcion: "",
+        image: "",
+        categoria_id: "",
+        subcategoria_id: "",
+        alergenos: [],
+        disponible: true,
+      },
+      loading: false,
+      error: null,
+      success: null,
+    });
+  };
+
+  const openEditDishModal = (dish) => {
+    setDishModal({
+      open: true,
+      editing: true,
+      data: {
+        ...dish,
+        alergenos: Array.isArray(dish.alergenos)
+          ? dish.alergenos.map((a) => (typeof a === "object" ? a.id : a))
+          : [],
+      },
+      loading: false,
+      error: null,
+      success: null,
+    });
+  };
+
+  const closeDishModal = () => {
+    setDishModal((prev) => ({ ...prev, open: false, error: null, success: null }));
+  };
+
+  const isDuplicateDish = (nombre, categoria_id, subcategoria_id, id = null) => {
+    return dishes.some(
+      (d) =>
+        d.nombre.trim().toLowerCase() === nombre.trim().toLowerCase() &&
+        String(d.categoria_id) === String(categoria_id) &&
+        String(d.subcategoria_id) === String(subcategoria_id) &&
+        (id === null || d.id !== id)
+    );
+  };
+
+  const handleSaveDish = async () => {
+    setDishModal((prev) => ({ ...prev, loading: true, error: null, success: null }));
+    const { nombre, precio, descripcion, image, categoria_id, subcategoria_id, alergenos, disponible } = dishModal.data;
+    if (!nombre.trim() || !precio || !categoria_id || !subcategoria_id) {
+      setDishModal((prev) => ({ ...prev, loading: false, error: "Completa todos los campos obligatorios." }));
+      return;
+    }
+    if (isNaN(precio) || Number(precio) <= 0) {
+      setDishModal((prev) => ({ ...prev, loading: false, error: "El precio debe ser un número positivo." }));
+      return;
+    }
+    if (isDuplicateDish(nombre, categoria_id, subcategoria_id, dishModal.editing ? dishModal.data.id : null)) {
+      setDishModal((prev) => ({ ...prev, loading: false, error: "Ya existe un plato con ese nombre en esta categoría y subcategoría." }));
+      return;
+    }
+    if (!Array.isArray(alergenos) || alergenos.some((a) => !alergenos.includes(a))) {
+      setDishModal((prev) => ({ ...prev, loading: false, error: "Selecciona alérgenos válidos." }));
+      return;
+    }
+    try {
+      const token = localStorage.getItem("token");
+      const url = dishModal.editing
+        ? `http://localhost:3000/api/platos/${dishModal.data.id}`
+        : "http://localhost:3000/api/platos";
+      const method = dishModal.editing ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          nombre,
+          precio,
+          descripcion,
+          image,
+          categoria_id,
+          subcategoria_id,
+          alergenos,
+          disponible,
+        }),
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Error al guardar el plato");
+      }
+      setDishModal((prev) => ({ ...prev, loading: false, success: "Plato guardado con éxito!" }));
+      fetchDishes();
+      setTimeout(() => closeDishModal(), 1200);
+    } catch (e) {
+      setDishModal((prev) => ({ ...prev, loading: false, error: e.message || "Error al guardar el plato" }));
+    }
+  };
+
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header moderno */}
@@ -125,7 +256,7 @@ const ManageDishes = () => {
           <div className="mt-4 md:mt-0">
             <button
               className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold px-6 py-3 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
-              onClick={() => setShowAddDishModal(true)}
+              onClick={openCreateDishModal}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -137,7 +268,7 @@ const ManageDishes = () => {
       </div>
 
       {/* Modal para agregar plato */}
-      {showAddDishModal && (
+      {dishModal.open && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           {/* Modal principal */}
           <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-4xl mx-4 overflow-hidden">
@@ -151,12 +282,14 @@ const ManageDishes = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-white">Crear Nuevo Plato</h4>
+                    <h4 className="text-xl font-bold text-white">
+                      {dishModal.editing ? "Editar Plato" : "Crear Nuevo Plato"}
+                    </h4>
                     <p className="text-amber-100 text-sm">Añade un nuevo plato al menú de Essen</p>
                   </div>
                 </div>
                 <button
-                  onClick={() => setShowAddDishModal(false)}
+                  onClick={closeDishModal}
                   className="p-2 hover:bg-white/20 rounded-xl transition-colors duration-200"
                 >
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,8 +308,8 @@ const ManageDishes = () => {
                   <input
                     type="text"
                     placeholder="Ej: Paella Valenciana"
-                    value={newDish.nombre}
-                    onChange={(e) => setNewDish({ ...newDish, nombre: e.target.value })}
+                    value={dishModal.data.nombre}
+                    onChange={(e) => setDishModal((prev) => ({ ...prev, data: { ...prev.data, nombre: e.target.value } }))}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
                   />
                 </div>
@@ -186,8 +319,8 @@ const ManageDishes = () => {
                     type="number"
                     step="0.01"
                     placeholder="15.50"
-                    value={newDish.precio}
-                    onChange={(e) => setNewDish({ ...newDish, precio: e.target.value })}
+                    value={dishModal.data.precio}
+                    onChange={(e) => setDishModal((prev) => ({ ...prev, data: { ...prev.data, precio: e.target.value } }))}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
                   />
                 </div>
@@ -197,8 +330,8 @@ const ManageDishes = () => {
                 <label className="block text-sm font-semibold text-gray-700">Descripción</label>
                 <textarea
                   placeholder="Descripción detallada del plato..."
-                  value={newDish.descripcion}
-                  onChange={(e) => setNewDish({ ...newDish, descripcion: e.target.value })}
+                  value={dishModal.data.descripcion}
+                  onChange={(e) => setDishModal((prev) => ({ ...prev, data: { ...prev.data, descripcion: e.target.value } }))}
                   rows={3}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 resize-none"
                 />
@@ -209,8 +342,8 @@ const ManageDishes = () => {
                 <input
                   type="text"
                   placeholder="nombre-imagen.jpg"
-                  value={newDish.image}
-                  onChange={(e) => setNewDish({ ...newDish, image: e.target.value })}
+                  value={dishModal.data.image}
+                  onChange={(e) => setDishModal((prev) => ({ ...prev, data: { ...prev.data, image: e.target.value } }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
                 />
               </div>
@@ -221,8 +354,8 @@ const ManageDishes = () => {
                   <label className="block text-sm font-semibold text-gray-700">Categoría</label>
                   <div className="flex gap-2">
                     <select
-                      value={newDish.categoria_id}
-                      onChange={(e) => setNewDish({ ...newDish, categoria_id: e.target.value, subcategoria_id: "" })}
+                      value={dishModal.data.categoria_id}
+                      onChange={(e) => setDishModal((prev) => ({ ...prev, data: { ...prev.data, categoria_id: e.target.value, subcategoria_id: "" } }))}
                       className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-gray-700"
                     >
                       <option value="" className="text-gray-500">Seleccionar categoría</option>
@@ -247,9 +380,9 @@ const ManageDishes = () => {
                   <label className="block text-sm font-semibold text-gray-700">Subcategoría</label>
                   <div className="flex gap-2">
                     <select
-                      value={newDish.subcategoria_id}
-                      onChange={(e) => setNewDish({ ...newDish, subcategoria_id: e.target.value })}
-                      disabled={!newDish.categoria_id}
+                      value={dishModal.data.subcategoria_id}
+                      onChange={(e) => setDishModal((prev) => ({ ...prev, data: { ...prev.data, subcategoria_id: e.target.value } }))}
+                      disabled={!dishModal.data.categoria_id}
                       className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-700"
                     >
                       <option value="" className="text-gray-500">Seleccionar subcategoría</option>
@@ -261,7 +394,7 @@ const ManageDishes = () => {
                     </select>
                     <button
                       onClick={() => setShowAddSubcategoryForm((prev) => !prev)}
-                      disabled={!newDish.categoria_id}
+                      disabled={!dishModal.data.categoria_id}
                       className="px-3 py-3 bg-gray-400 hover:bg-gray-500 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-xl shadow-md transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -349,25 +482,74 @@ const ManageDishes = () => {
                   </div>
                 </div>
               )}
+
+              {/* Alérgenos */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Alérgenos</label>
+                <div className="flex gap-2">
+                  {alergenos.map((alergeno) => (
+                    <button
+                      key={alergeno.id}
+                      onClick={() => {
+                        const updatedAlergenos = dishModal.data.alergenos.includes(alergeno.id)
+                          ? dishModal.data.alergenos.filter((a) => a !== alergeno.id)
+                          : [...dishModal.data.alergenos, alergeno.id];
+                        setDishModal((prev) => ({ ...prev, data: { ...prev.data, alergenos: updatedAlergenos } }));
+                      }}
+                      className={`px-3 py-2 rounded-full ${
+                        dishModal.data.alergenos.includes(alergeno.id)
+                          ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white"
+                          : "bg-gray-200 text-gray-700"
+                      }`}
+                    >
+                      {alergeno.nombre}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Disponibilidad */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Disponibilidad</label>
+                <select
+                  value={dishModal.data.disponible ? "true" : "false"}
+                  onChange={(e) => setDishModal((prev) => ({ ...prev, data: { ...prev.data, disponible: e.target.value === "true" } }))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-gray-700"
+                >
+                  <option value="true">Disponible</option>
+                  <option value="false">No disponible</option>
+                </select>
+              </div>
+
+              {/* Feedback */}
+              {dishModal.loading && (
+                <div className="text-center text-amber-700 text-sm">
+                  {dishModal.error ? (
+                    <span className="text-red-600">{dishModal.error}</span>
+                  ) : (
+                    <span className="text-green-600">{dishModal.success}</span>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Footer del modal */}
             <div className="bg-gray-50 p-4 border-t border-gray-200">
               <div className="flex gap-3 justify-end">
                 <button
-                  onClick={() => setShowAddDishModal(false)}
+                  onClick={closeDishModal}
                   className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-sm"
                 >
                   Cancelar
                 </button>
                 <button
-                  onClick={handleAddDish}
+                  onClick={handleSaveDish}
                   className="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-semibold shadow-md transition-all duration-200 hover:scale-105 flex items-center gap-2 text-sm"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
-                  Crear Plato
+                  {dishModal.editing ? "Actualizar Plato" : "Crear Plato"}
                 </button>
               </div>
             </div>
@@ -445,7 +627,7 @@ const ManageDishes = () => {
                     <td className="px-6 py-4 border-b border-amber-100">
                       <button
                         className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-md transition-all duration-200 hover:scale-105"
-                        onClick={() => console.log("Modificar plato", dish)}
+                        onClick={() => openEditDishModal(dish)}
                       >
                         Modificar
                       </button>
