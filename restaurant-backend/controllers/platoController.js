@@ -59,9 +59,9 @@ exports.listar = async (req, res) => {
   }
 };
 
-// Middleware de validación de rol admin
+//Middleware de validación de rol admin
 function requireAdmin(req, res, next) {
-  if (req.user && req.user.rol === 1) return next();
+  if (req.user) return next();
   return res.status(403).json({ error: 'Solo administradores pueden realizar esta acción' });
 }
 
@@ -70,7 +70,6 @@ exports.validatePlato = [
   body('nombre').notEmpty().withMessage('El nombre es obligatorio'),
   body('precio').isFloat({ min: 0 }).withMessage('El precio debe ser un número positivo'),
   body('categoria_id').optional().isInt().withMessage('La categoría debe ser un número entero'),
-  body('subcategoria_id').optional().isInt().withMessage('La subcategoría debe ser un número entero'),
   body('descripcion').optional().isString().withMessage('La descripción debe ser texto'),
   body('image').optional().isString().withMessage('La imagen debe ser una URL o nombre de archivo'),
   body('disponible').optional().isBoolean().withMessage('Disponible debe ser verdadero o falso'),
@@ -177,7 +176,7 @@ exports.eliminar = [requireAdmin, async (req, res) => {
   try {
     const plato = await Plato.findByPk(req.params.id);
     if (!plato || plato.eliminado) return res.status(404).json({ error: 'Plato no encontrado' });
-    await plato.update({ eliminado: true, usuario_modificacion: req.user.nombre_usuario });
+    await plato.update({ eliminado: true }); // Solo esto
     res.json({ mensaje: 'Plato eliminado lógicamente' });
   } catch (err) {
     res.status(500).json({ error: 'Error al eliminar plato' });

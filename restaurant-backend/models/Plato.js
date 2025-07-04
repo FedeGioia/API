@@ -13,8 +13,8 @@ const Plato = db.define('Plato', {
   categoria_id: { type: DataTypes.INTEGER },
   disponible: { type: DataTypes.BOOLEAN, defaultValue: true },
   eliminado: { type: DataTypes.BOOLEAN, defaultValue: false },
-  // usuario_creacion: { type: DataTypes.STRING },
-  // usuario_modificacion: { type: DataTypes.STRING },
+  usuario_creacion: { type: DataTypes.STRING },
+  usuario_modificacion: { type: DataTypes.STRING, defaultValue: 1 },
   image: { type: DataTypes.STRING },
 }, {
   timestamps: true,

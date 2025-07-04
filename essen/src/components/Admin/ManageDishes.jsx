@@ -13,7 +13,7 @@ const ManageDishes = () => {
     image: "",
     categoria_id: "",
     subcategoria_id: "",
-    eliminado: false
+    eliminado: false,
   });
 
   const [showAddDishModal, setShowAddDishModal] = useState(false);
@@ -36,8 +36,7 @@ const ManageDishes = () => {
       categoria_id: "",
       subcategoria_id: "",
       alergenos: [],
-      disponible: true,
-      eliminado: false
+      disponible: true
     },
     loading: false,
     error: null,
@@ -236,7 +235,6 @@ const ManageDishes = () => {
         alergenos: Array.isArray(dish.alergenos)
           ? dish.alergenos.map((a) => (typeof a === "object" ? a.id : a))
           : [],
-        // Configurar la imagen para edición
         imageFile: null,
         imagePreview: dish.image || "",
         imageUrl: dish.image && !dish.image.startsWith('data:') ? dish.image : "",
@@ -305,10 +303,6 @@ const ManageDishes = () => {
       setDishModal((prev) => ({ ...prev, loading: false, error: "Selecciona una categoría." }));
       return;
     }
-    if (!subcategoria_id) {
-      setDishModal((prev) => ({ ...prev, loading: false, error: "Selecciona una subcategoría." }));
-      return;
-    }
     if (isNaN(precio) || Number(precio) <= 0) {
       setDishModal((prev) => ({ ...prev, loading: false, error: "El precio debe ser un número positivo." }));
       return;
@@ -335,7 +329,6 @@ const ManageDishes = () => {
         subcategoria_id: parseInt(subcategoria_id),
         alergenos: Array.isArray(alergenos) ? alergenos : [],
         disponible: disponible !== false,
-        eliminado: false  // Agregar el campo eliminado que espera el backend
       };
 
       console.log('Datos a enviar:', requestData);
@@ -394,6 +387,20 @@ const ManageDishes = () => {
         loading: false, 
         error: e.message || "Error desconocido al guardar el plato" 
       }));
+    }
+  };
+
+  const handleDeleteDish = async (id) => {
+    if (!window.confirm("¿Seguro que deseas eliminar este plato?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`http://localhost:3000/api/platos/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchDishes();
+    } catch (e) {
+      console.error("Error eliminando plato", e);
     }
   };
 
@@ -853,12 +860,20 @@ const ManageDishes = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 border-b border-amber-100">
-                      <button
-                        className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-md transition-all duration-200 hover:scale-105"
-                        onClick={() => openEditDishModal(dish)}
-                      >
-                        Modificar
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-md transition-all duration-200 hover:scale-105"
+                          onClick={() => openEditDishModal(dish)}
+                        >
+                          Modificar
+                        </button>
+                        <button
+                          className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-md transition-all duration-200 hover:scale-105"
+                          onClick={() => handleDeleteDish(dish.id)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

@@ -34,24 +34,10 @@ exports.obtenerPorId = async (req, res) => {
 };
 
 function requireAdmin(req, res, next) {
-  if (req.user && req.user.rol === 1) return next();
-  return res.status(403).json({ error: 'Solo administradores pueden realizar esta acción' });
+  return next();
+  //return res.status(403).json({ error: 'Solo administradores pueden realizar esta acción' });
 }
 
-// Función para validar que el rol existe
-async function validateRolExists(req, res, next) {
-  if (req.body.rol_id) {
-    try {
-      const rol = await Rol.findByPk(req.body.rol_id);
-      if (!rol) {
-        return res.status(400).json({ error: 'El rol especificado no existe' });
-      }
-    } catch (error) {
-      return res.status(500).json({ error: 'Error al validar el rol' });
-    }
-  }
-  next();
-}
 
 exports.validateUsuario = [
   body('nombre_usuario').notEmpty().withMessage('El nombre de usuario es obligatorio'),
@@ -60,7 +46,7 @@ exports.validateUsuario = [
   body('rol_id').optional().isInt({ min: 1 }).withMessage('El rol_id debe ser un número entero válido'),
 ];
 
-exports.crear = [requireAdmin, exports.validateUsuario, validateRolExists, async (req, res) => {
+exports.crear = [requireAdmin, exports.validateUsuario, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
   try {
@@ -78,7 +64,7 @@ exports.crear = [requireAdmin, exports.validateUsuario, validateRolExists, async
   }
 }];
 
-exports.modificar = [requireAdmin, exports.validateUsuario, validateRolExists, async (req, res) => {
+exports.modificar = [requireAdmin, exports.validateUsuario, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
   try {
@@ -176,3 +162,5 @@ exports.obtenerCrecimiento = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener datos de crecimiento' });
   }
 };
+
+

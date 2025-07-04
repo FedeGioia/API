@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
-  const [newUser, setNewUser] = useState({ nombre_usuario: "", email: "", password: "", rol_id: "" });
+    const [newUser, setNewUser] = useState({ nombre_usuario: "", email: "", password: "", rol_id: "", eliminado: false });
   const [editableUserId, setEditableUserId] = useState(null);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
 
