@@ -31,10 +31,4 @@ const Categoria = db.define('Categoria', {
   updatedAt: 'fecha_modificacion'
 });
 
-// Definir la relación con Subcategorías
-Categoria.hasMany(require('./Subcategoria'), { 
-  foreignKey: 'categoria_id', 
-  as: 'subcategorias' 
-});
-
 module.exports = Categoria;

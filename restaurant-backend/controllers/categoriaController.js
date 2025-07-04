@@ -1,5 +1,4 @@
-const Categoria = require('../models/Categoria');
-const Subcategoria = require('../models/Subcategoria');
+const { Categoria, Subcategoria } = require('../models');
 const { body, validationResult } = require('express-validator');
 
 // Middleware para verificar que sea admin

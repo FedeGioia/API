@@ -1,5 +1,4 @@
-const Usuario = require('../models/Usuario');
-const Roles = require('../models/Rol');
+const { Usuario, Rol } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
@@ -8,7 +7,7 @@ exports.listar = async (req, res) => {
   try {
     const usuarios = await Usuario.findAll({ 
       where: { eliminado: false },
-      include: [{ model: Roles, as: 'rol', attributes: ['id', 'nombre'] }]
+      include: [{ model: Rol, as: 'rol', attributes: ['id', 'nombre'] }]
     });
     res.json(usuarios);
   } catch (err) {
@@ -20,7 +19,7 @@ exports.obtenerPorId = async (req, res) => {
   try {
     const usuario = await Usuario.findOne({
       where: { id: req.params.id, eliminado: false },
-      include: [{ model: Roles, as: 'rol', attributes: ['id', 'nombre'] }]
+      include: [{ model: Rol, as: 'rol', attributes: ['id', 'nombre'] }]
     });
     
     if (!usuario) {
@@ -42,7 +41,7 @@ function requireAdmin(req, res, next) {
 async function validateRolExists(req, res, next) {
   if (req.body.rol_id) {
     try {
-      const rol = await Roles.findByPk(req.body.rol_id);
+      const rol = await Rol.findByPk(req.body.rol_id);
       if (!rol) {
         return res.status(400).json({ error: 'El rol especificado no existe' });
       }
@@ -69,7 +68,7 @@ exports.crear = [requireAdmin, exports.validateUsuario, validateRolExists, async
     
     // Devolver el usuario con su rol
     const usuarioConRol = await Usuario.findByPk(usuario.id, {
-      include: [{ model: Roles, as: 'rol', attributes: ['id', 'nombre'] }]
+      include: [{ model: Rol, as: 'rol', attributes: ['id', 'nombre'] }]
     });
     
     res.status(201).json(usuarioConRol);
@@ -94,7 +93,7 @@ exports.modificar = [requireAdmin, exports.validateUsuario, validateRolExists, a
     
     // Devolver el usuario actualizado con su rol
     const usuarioActualizado = await Usuario.findByPk(usuario.id, {
-      include: [{ model: Roles, as: 'rol', attributes: ['id', 'nombre'] }]
+      include: [{ model: Rol, as: 'rol', attributes: ['id', 'nombre'] }]
     });
     
     res.json(usuarioActualizado);

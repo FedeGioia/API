@@ -1,7 +1,4 @@
-const Plato = require('../models/Plato');
-const Categoria = require('../models/Categoria');
-const Subcategoria = require('../models/Subcategoria');
-const Alergeno = require('../models/Alergeno'); 
+const { Plato, Categoria, Subcategoria, Alergeno } = require('../models');
 const { body, validationResult } = require('express-validator');
 
 exports.listar = async (req, res) => {
